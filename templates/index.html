@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agriculture Information System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Agriculture Information System</h1>
+
+  {% if message %}<p class="message">{{ message }}</p>{% endif %}
+
+  <!-- PART 1: SELECT CROPS -->
+  <div class="box">
+    <h2>1. Select the crops</h2>
+    <form method="get">
+      <label>Category</label>
+      <select name="category" onchange="this.form.submit()">
+        <option value="">-- Choose a category --</option>
+        {% for num, c in categories.items() %}
+          <option value="{{ num }}" {% if num == category %}selected{% endif %}>{{ c[0] }}</option>
+        {% endfor %}
+      </select>
+
+      {% if crops %}
+        <label>Crop</label>
+        <select name="crop">
+          <option value="">-- Choose a crop --</option>
+          {% for c in crops %}
+            <option value="{{ c }}" {% if c == crop %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Show details</button>
+      {% endif %}
+    </form>
+
+    {% if details %}
+      <div class="result"><b>{{ crop }}</b><br>{{ details }}</div>
+    {% endif %}
+  </div>
+
+  <!-- PART 2: ADD / UPDATE / REMOVE -->
+  <div class="box">
+    <h2>2. Add, update or remove a crop</h2>
+    <form method="post">
+      <input type="hidden" name="form" value="manage">
+
+      <label>Category</label>
+      <select name="m_category">
+        {% for num, c in categories.items() %}
+          <option value="{{ num }}">{{ c[0] }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Operation</label>
+      <select name="operation">
+        <option value="add">Add a crop</option>
+        <option value="update">Update a crop</option>
+        <option value="remove">Remove a crop</option>
+      </select>
+
+      <label>Crop name</label>
+      <input type="text" name="name" placeholder="e.g. Wheat">
+
+      <label>Crop details (for add / update)</label>
+      <textarea name="text" rows="3" placeholder="Write the details here"></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</body>
+</html>
