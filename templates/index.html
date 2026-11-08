@@ -12,9 +12,9 @@
   {% if message %}<p class="message">{{ message }}</p>{% endif %}
 
   <!-- PART 1: SELECT CROPS -->
-  <div class="box">
+  <div class="box" id="select">
     <h2>1. Select the crops</h2>
-    <form method="get">
+    <form method="get" action="#select">
       <label>Category</label>
       <select name="category" onchange="this.form.submit()">
         <option value="">-- Choose a category --</option>
@@ -41,9 +41,9 @@
   </div>
 
   <!-- PART 2: ADD / UPDATE / REMOVE -->
-  <div class="box">
+  <div class="box" id="manage">
     <h2>2. Add, update or remove a crop</h2>
-    <form method="post">
+    <form method="post" action="#manage">
       <input type="hidden" name="form" value="manage">
 
       <label>Category</label>
@@ -69,5 +69,40 @@
       <button type="submit">Submit</button>
     </form>
   </div>
+  <!-- PART 3: DIAGNOSE THE DISEASE IN THE CROPS -->
+  <div class="box" id="diagnose">
+    <h2>3. Diagnose the disease in the crops</h2>
+    <form method="get" action="#diagnose">
+      <label>Crop</label>
+      <select name="d_crop" onchange="this.form.submit()">
+        <option value="">-- Choose a crop --</option>
+        {% for c in problem_crops %}
+          <option value="{{ c }}" {% if c == d_crop %}selected{% endif %}>{{ c.title() }}</option>
+        {% endfor %}
+      </select>
+
+      {% if diseases %}
+        <label>Disease</label>
+        <select name="d_disease">
+          <option value="">-- Choose a disease --</option>
+          {% for d in diseases %}
+            <option value="{{ loop.index0 }}" {% if d_disease == loop.index0|string %}selected{% endif %}>{{ d.problem }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Show details</button>
+      {% endif %}
+    </form>
+
+    {% if disease %}
+      <div class="result">
+        <b>{{ disease.problem }}</b>
+        <p><b>Symptoms:</b> {{ disease.symptoms }}</p>
+        <p><b>Cause:</b> {{ disease.cause }}</p>
+        <p><b>Solution:</b> {{ disease.solution }}</p>
+        <p><b>Prevention:</b> {{ disease.prevention }}</p>
+      </div>
+    {% endif %}
+  </div>
+
 </body>
 </html>
