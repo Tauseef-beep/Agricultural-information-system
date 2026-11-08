@@ -1,10 +1,12 @@
-# web.py - NEW file. It does not change any of your old files.
-# It reuses your data lists and your add_crop / update_crop / remove_crop functions.
+# web.py - the web (HTML/CSS) version. It does not change your other files.
+# It reuses your data lists, your add_crop / update_crop / remove_crop functions
+# and your crop_problems data (diseases).
 from flask import Flask, render_template, request
 from app.application import (
     cereals_data, Agriculture_data, Fruit_Data, Oil_Seed_data, Beverages_data,
     add_crop, update_crop, remove_crop,
 )
+from data.crop_problems_data import crop_problems
 
 web = Flask(__name__)
 
@@ -50,8 +52,18 @@ def home():
             if crop and item[0].lower() == crop.lower():
                 details = item[1]
 
+    # Part 3: diagnose the disease of a crop (uses crop_problems)
+    d_crop = request.args.get("d_crop", "")
+    d_disease = request.args.get("d_disease", "")
+    diseases = crop_problems.get(d_crop, [])
+    disease = None
+    if d_disease.isdigit() and int(d_disease) < len(diseases):
+        disease = diseases[int(d_disease)]
+
     return render_template("index.html", categories=CATEGORIES, category=category,
-                           crops=crops, crop=crop, details=details, message=message)
+                           crops=crops, crop=crop, details=details, message=message,
+                           problem_crops=list(crop_problems.keys()), d_crop=d_crop,
+                           diseases=diseases, d_disease=d_disease, disease=disease)
 
 
 if __name__ == "__main__":
